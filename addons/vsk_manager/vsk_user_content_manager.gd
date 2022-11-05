@@ -100,7 +100,7 @@ func cancel_user_content(p_user_content_path: String) -> void:
 		pass
 
 
-func make_background_load_request(p_url: String, p_user_content_path: String, p_skip_validation: bool, p_external_path_whitelist: Dictionary, p_resource_whitelist: Dictionary) -> bool:
+func make_background_load_request(p_url: String, p_user_content_path: String, p_skip_validation: bool, p_external_path_whitelist: Dictionary, p_resource_whitelist: Dictionary) -> int:
 	validation_skip_flags[p_url] = p_skip_validation
 
 	if !background_loading_tasks.has(p_user_content_path):
@@ -108,25 +108,22 @@ func make_background_load_request(p_url: String, p_user_content_path: String, p_
 		if background_loading_tasks_in_progress == 0:
 			if BackgroundLoader.task_done.connect(self._background_loader_task_done) != OK:
 				printerr("Could not connect task_finished")
-				return false
+				return -1
 			if BackgroundLoader.task_set_stage.connect(self._background_loader_task_stage) != OK:
 				printerr("Could not connect task_set_stage")
-				return false
+				return -1
 			if BackgroundLoader.task_set_stage_count.connect(self._background_loader_task_stage_count) != OK:
 				printerr("Could not connect task_set_stage_count")
-				return false
+				return -1
 
 		background_loading_tasks_in_progress += 1
 		if p_skip_validation:
-			return BackgroundLoader.request_loading_task_bypass_whitelist(p_user_content_path, "PackedScene")
+			var task_id : int = BackgroundLoader.request_loading_task_bypass_whitelist(p_user_content_path, "PackedScene")
+			return task_id
 		else:
-			return BackgroundLoader.request_loading_task(p_user_content_path, p_external_path_whitelist, p_resource_whitelist, "PackedScene")
-	else:
-		# If a loading task for this user content is already in progress,
-		# add an extra url to it.
-		if background_loading_tasks[p_user_content_path].find(p_url) == -1:
-			background_loading_tasks[p_user_content_path].push_back(p_url)
-		return true
+			var task_id : int = BackgroundLoader.request_loading_task(p_user_content_path, p_external_path_whitelist, p_resource_whitelist, "PackedScene")
+			return task_id
+	return -1
 
 
 func make_asset_request(

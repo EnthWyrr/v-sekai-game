@@ -40,8 +40,7 @@ func _all_preloading_done() -> void:
 ##
 func _next_preloading_task() -> void:
 	if preloading_tasks.size() > 0:
-		if BackgroundLoader.request_loading_task_bypass_whitelist(preloading_tasks.keys()[0]) == false:
-			printerr("request_loading_task failed!")
+		BackgroundLoader.request_loading_task_bypass_whitelist(preloading_tasks.keys()[0])
 	else:
 		LogManager.fatal_error("Preloading task queue underflow!")
 

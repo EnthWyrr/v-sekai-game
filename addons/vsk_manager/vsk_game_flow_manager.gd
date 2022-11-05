@@ -49,16 +49,6 @@ var signal_table: Array = [
 		"method": "_network_callback"
 	},
 	{
-		"singleton": "BackgroundLoader",
-		"signal": "thread_started",
-		"method": "quit_callback_increment"
-	},
-	{
-		"singleton": "BackgroundLoader",
-		"signal": "thread_ended",
-		"method": "quit_callback_decrement"
-	},
-	{
 		"singleton": "ScreenshotManager",
 		"signal": "screenshot_requested",
 		"method": "_screenshot_requested"
@@ -750,8 +740,6 @@ func _assign_gameroots() -> void:
 ## Connects the is_quitting signal to is_quitting methods in varous other subsystems
 ##
 func _connect_pre_quitting_signals() -> void:
-	if connect("is_pre_quitting", BackgroundLoader.is_quitting) != OK:
-		printerr("Could not connect is_quitting for BackgroundLoader")
 	if connect("is_pre_quitting", InputManager.is_quitting) != OK:
 		printerr("Could not connect is_quitting InputManager")
 	if connect("is_pre_quitting", VRManager.is_quitting) != OK:
